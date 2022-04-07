@@ -20,5 +20,6 @@
       <dependency id="Braintree" version="3.3.0" />
       <dependency id="PayPalMerchantSDK" version="2.15.117" />
 		</dependencies>
+		<repository type="git" url="https://github.com/andyfelton-equatedigital/Merchello.git" />
 	</metadata>
 </package>

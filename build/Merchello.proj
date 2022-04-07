@@ -49,7 +49,7 @@
 		<AuthorUrl>https://github.com/rustyswayne/Merchello/graphs/contributors</AuthorUrl>
 		<PackageLicenseName>MIT license</PackageLicenseName>
 		<PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
-		<ProjectUrl>https://github.com/Merchello/Merchello</ProjectUrl>
+		<ProjectUrl>https://github.com/andyfelton-equatedigital/Merchello</ProjectUrl>
 	</PropertyGroup>
 
 	<!-- NUGET ONLY PROPERTIES -->
@@ -68,10 +68,10 @@
 	<!-- APPVEYOR PROPERTIES -->
 	<PropertyGroup>
 		<FileVersion>$(APPVEYOR_BUILD_VERSION)</FileVersion>
-    <MerchelloVersion>$(APPVEYOR_BUILD_VERSION)</MerchelloVersion>
+    	<MerchelloVersion>$(APPVEYOR_BUILD_VERSION)</MerchelloVersion>
 	</PropertyGroup>
 	<Choose>
-		<When Condition="$(APPVEYOR_BUILD_NUMBER) != '' And $(APPVEYOR_REPO_TAG) != 'true' ">
+		<When Condition="$(GITHUB_RUN_NUMBER) != '' And $(GITHUB_REF_TYPE) == 'tag' ">
 			<PropertyGroup>
 				<Release>false</Release>
 			</PropertyGroup>
@@ -99,7 +99,7 @@
 
   <!-- TARGETS -->
 	<Target Name="GetProductVersion">
-		<Error Condition="$(AbortBuild) == 'true'" Text="Aborting the build as the UMBRACO_PACKAGE_PRERELEASE_SUFFIX suffix is set 'rtm' but APPVEYOR_REPO_TAG is not 'true'" />
+		<Error Condition="$(AbortBuild) == 'true'" Text="Aborting the build as the UMBRACO_PACKAGE_PRERELEASE_SUFFIX suffix is set 'rtm' but GITHUB_REF_TYPE is not 'tag'" />
 		<GetProductVersion BuildVersion="$(APPVEYOR_BUILD_VERSION)" BuildSuffix="$(UMBRACO_PACKAGE_PRERELEASE_SUFFIX)" Release="$(Release)">
 			<Output TaskParameter="ProductVersion" PropertyName="ProductVersion"/>
 		</GetProductVersion>

@@ -34,15 +34,74 @@ jobs:
       - name: Setup Ruby, JRuby and TruffleRuby
         uses: ruby/setup-ruby@v1.100.1
         with:
-          ruby-version: 22-x64
+          ruby-version: 2.7.2
       
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.1.0
         with:
-          node-version: 4
+          node-version: '8'
           
+      - name: Install sass
+        run: gem install sass
+
       - name: Restore NuGet packages
-        run: nuget restors src\Merchello.sln
+        run: nuget restore src\Merchello.sln
+
+      - name: Install NPM packages
+        working-directory: src\Merchello.Web.UI.Client
+        run: npm install -g grunt-cli
+        
+      - name: Dump version
+        working-directory: src\Merchello.Web.UI.Client
+        run: |
+          npm -v
+          node -v
+          ruby -v
+          sass -v
+          grunt -version
+
+      - name: Install NPM packages for Merchello.Web.UI.Client
+        working-directory: src\Merchello.Web.UI.Client
+        run: npm install
+
+      - name: Grunt build for Merchello.Web.UI.Client
+        working-directory: src\Merchello.Web.UI.Client
+        run: grunt build
+
+      - name: Install NPM packages for Merchello.Providers.UI.Client
+        working-directory: src\Merchello.Providers.UI.Client
+        run: npm install
+
+      - name: Grunt build for Merchello.Providers.UI.Client
+        working-directory: src\Merchello.Providers.UI.Client
+        run: grunt build
+
+      - name: Install NPM packages for Merchello.Mui.Client
+        working-directory: src\Merchello.Mui.Client
+        run: npm install
+
+      - name: Grunt build for Merchello.Mui.Client
+        working-directory: src\Merchello.Mui.Client
+        run: grunt build
         
       - name: Build the Solution
         run: msbuild build\package.proj
+        env:
+          APPVEYOR_BUILD_VERSION: 2.8.0
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Merchello.Core
+          path: artifacts\Merchello.Core.*.nupkg
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Merchello.FastTrack
+          path: artifacts\Merchello.FastTrack.*.nupkg
+          
+      - name: publish Merchello.Core package
+        run:  dotnet.exe nuget push artifacts\Merchello.Core.*.nupkg --source github --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: publish Merchello.FastTrack package
+        run:  dotnet.exe nuget push artifacts\Merchello.FastTrack.*.nupkg --source github --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }}
+    
