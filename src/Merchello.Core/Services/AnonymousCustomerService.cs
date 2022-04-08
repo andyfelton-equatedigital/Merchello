@@ -1,4 +1,8 @@
-﻿namespace Merchello.Core.Services
+﻿using Merchello.Core.Models.Rdbms;
+using Merchello.Core.Persistence.Factories;
+using Umbraco.Core.Persistence;
+
+namespace Merchello.Core.Services
 {
     using System;
     using System.Collections.Generic;
@@ -290,6 +294,39 @@
                 var query = Query<IAnonymousCustomer>.Builder.Where(x => x.CreateDate <= createdDate);
 
                 return repository.GetByQuery(query);
+            }
+        }
+
+        /// <summary>
+        /// The get anonymous customers created before a certain date.
+        /// </summary>
+        /// <param name="createdDate">
+        /// The created Date.
+        /// </param>
+        /// <param name="maxCustomers">
+        /// Maximum number of customers to retrieve.
+        /// </param>
+        /// <returns>
+        /// The collection of <see cref="IAnonymousCustomer"/> older than a certain number of days.
+        /// </returns>
+        /// <remarks>
+        /// For maintenance routines
+        /// </remarks>
+        public IEnumerable<IAnonymousCustomer> GetAnonymousCustomersCreatedBefore(DateTime createdDate, Int32 maxCustomers)
+        {
+            List<AnonymousCustomer> anonymousCustomers = new List<AnonymousCustomer>();
+
+            var dbContext = ApplicationContext.Current.DatabaseContext;
+            var sql = new Sql().Select("*")
+                .From<AnonymousCustomerDto>(dbContext.SqlSyntax)
+                .Where<AnonymousCustomerDto>(x => x.CreateDate <= createdDate);
+
+            var topSql = dbContext.SqlSyntax.SelectTop(sql, maxCustomers);
+
+            var factory = new AnonymousCustomerFactory();
+            foreach (var dto in dbContext.Database.Fetch<AnonymousCustomerDto>(topSql))
+            {
+                yield return factory.BuildEntity(dto);
             }
         }
     }

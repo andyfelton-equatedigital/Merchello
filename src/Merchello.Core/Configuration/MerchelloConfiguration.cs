@@ -216,6 +216,16 @@ namespace Merchello.Core.Configuration
             get { return int.Parse(Section.Settings["AnonymousCustomersMaxDays"].Value); }
         }
 
+        /// <summary>
+        /// Gets the maximum number of records to delete in one batch via a scheduled task.
+        /// </summary>
+        /// <remarks>
+        /// The maximum number of records that will be deleted via a scheduled task.
+        /// </remarks>
+        public int AnonymousCustomersMaxDeletes
+        {
+            get { return int.Parse(Section.Settings["AnonymousCustomersMaxDeletes"].Value); }
+        }
 
         /// <summary>
         /// Gets the number of days to persist an anonymous customer cookie.

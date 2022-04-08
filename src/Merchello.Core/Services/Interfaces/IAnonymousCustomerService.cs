@@ -50,5 +50,19 @@
         /// The collection of <see cref="IAnonymousCustomer"/> older than a certain number of days.
         /// </returns>
         IEnumerable<IAnonymousCustomer> GetAnonymousCustomersCreatedBefore(DateTime createdDate);
+
+        /// <summary>
+        /// The get anonymous customers created before a certain date.
+        /// </summary>
+        /// <param name="createdDate">
+        /// The created Date.
+        /// </param>
+        /// <param name="maxCustomers">
+        /// Maximum number of customers to retrieve.
+        /// </param>
+        /// <returns>
+        /// The collection of <see cref="IAnonymousCustomer"/> older than a certain number of days.
+        /// </returns>
+        IEnumerable<IAnonymousCustomer> GetAnonymousCustomersCreatedBefore(DateTime createdDate, Int32 maxCustomers);
     }
 }

@@ -65,5 +65,29 @@
 
             return anonymousCustomers.Count();
         }
+
+        /// <summary>
+        /// Delete all customers older than the date in the setting
+        /// 
+        /// GET /umbraco/Merchello/ScheduledTasksApi/RemoveAndCleanAnonymousCustomers
+        ///     /Umbraco/Api/ScheduledTasksApiController/RemoveAndCleanAnonymousCustomers
+        /// </summary>
+        /// <returns>
+        /// The count of anonymous customers deleted
+        /// </returns>
+        [AcceptVerbs("GET", "POST")]
+        public int RemoveAndCleanAnonymousCustomers()
+        {
+            int maxDays = MerchelloConfiguration.Current.AnonymousCustomersMaxDays;
+            int maxDeletes = MerchelloConfiguration.Current.AnonymousCustomersMaxDeletes;
+
+            var anonymousCustomers = _anonymousCustomerService.GetAnonymousCustomersCreatedBefore(DateTime.Today.AddDays(-maxDays), maxDeletes).ToArray();
+
+            _anonymousCustomerService.Delete(anonymousCustomers);
+
+            LogHelper.Info<string>(string.Format("RemoveAnonymousCustomers - Removed Count {0}", anonymousCustomers.Count()));
+
+            return anonymousCustomers.Count();
+        }
     }
 }
